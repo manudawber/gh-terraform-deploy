@@ -3,6 +3,11 @@ provider "google" {
   region      = "us-central1"
 }
 
+// Enable GCP Computer service
+resource "google_project_service" "compute" {
+  service = "compute.googleapis.com"
+}
+
 // Terraform plugin for creating random ids
 resource "random_id" "instance_id" {
   byte_length = 8
