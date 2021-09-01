@@ -1,0 +1,68 @@
+name: 'Terraform Dev'
+
+on: workflow_dispatch
+
+jobs:
+  tf-dev-plan:
+    runs-on: ubuntu-latest
+    environment: dev
+    defaults:
+      working-directory: ${{ github.workspace }}/environments/dev
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Format
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+      
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan
+
+  tf-dev-apply:
+    runs-on: ubuntu-latest
+    environment: dev
+    defaults:
+      working-directory: ${{ github.workspace }}/environments/dev
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve

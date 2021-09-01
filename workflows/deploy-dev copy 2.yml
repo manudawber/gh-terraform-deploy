@@ -1,0 +1,156 @@
+name: 'Deploy MLOps Dev Infrastructure'
+
+on: workflow_dispatch
+
+jobs:
+  terraform-dev:
+    if: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/prod' }}
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp_sa_key.json
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Set up GCP credentials
+    - name: Setup GCP credentials
+      run: |
+        echo $GCP_SA_KEY > $GOOGLE_APPLICATION_CREDENTIALS
+      env:
+        GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Check formatting
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+    # Initialise working directory
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ github.workspace }}/environments/dev
+
+    # Validate
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: ${{ github.workspace }}/environments/dev
+
+    # Generate an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ${{ github.workspace }}/environments/dev
+
+    # Apply changes
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ${{ github.workspace }}/environments/dev
+
+
+  terraform-test:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    environment: test
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp_sa_key.json
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Set up GCP credentials
+    - name: Setup GCP credentials
+      run: |
+        echo $GCP_SA_KEY > $GOOGLE_APPLICATION_CREDENTIALS
+      env:
+        GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Check formatting
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+    # Initialise working directory
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ github.workspace }}/environments/test
+
+    # Validate
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: ${{ github.workspace }}/environments/test
+
+    # Generate an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ${{ github.workspace }}/environments/test
+
+    # Apply changes
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ${{ github.workspace }}/environments/test
+
+
+  terraform-prod:
+    if: ${{ github.ref == 'refs/heads/prod' }}
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp_sa_key.json
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Set up GCP credentials
+    - name: Setup GCP credentials
+      run: |
+        echo $GCP_SA_KEY > $GOOGLE_APPLICATION_CREDENTIALS
+      env:
+        GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Check formatting
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+    # Initialise working directory
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ github.workspace }}/environments/prod
+
+    # Validate
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: ${{ github.workspace }}/environments/prod
+
+    # Generate an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ${{ github.workspace }}/environments/prod
+
+    # Apply changes
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ${{ github.workspace }}/environments/prod

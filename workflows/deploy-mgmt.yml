@@ -1,0 +1,62 @@
+name: 'Deploy Management Infrastructure'
+
+on:
+  push:
+    branches:
+    - mgmt
+    paths-ignore:
+    - 'environments/dev/**'
+    - 'environments/test/**'
+    - 'environments/prod/**'
+
+jobs:
+  terraform-mgmt:
+    runs-on: ubuntu-latest
+    environment: mgmt
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp_sa_key.json
+      TF_VAR_github_known_hosts_secret: ${{ secrets.KNOWN_HOSTS }}
+      TF_VAR_github_deploy_key_secret: ${{ secrets.DEPLOY_KEY }}
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Set up GCP credentials
+    - name: Setup GCP credentials
+      run: |
+        echo $GCP_SA_KEY > $GOOGLE_APPLICATION_CREDENTIALS
+      env:
+        GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Check formatting
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+    # Initialise working directory
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ github.workspace }}/environments/mgmt
+
+    # Validate
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: ${{ github.workspace }}/environments/mgmt
+
+    # Generate an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ${{ github.workspace }}/environments/mgmt
+
+    # Apply changes
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ${{ github.workspace }}/environments/mgmt
