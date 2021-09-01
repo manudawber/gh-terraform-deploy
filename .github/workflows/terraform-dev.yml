@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     defaults:
-      working-directory: ${{ github.workspace }}/environments/dev
+      run:
+        working-directory: ${{ github.workspace }}/environments/dev
 
     steps:
     - name: Checkout
@@ -41,6 +42,7 @@ jobs:
       run: terraform plan
 
   tf-dev-apply:
+    needs: tf-dev-plan
     runs-on: ubuntu-latest
     environment: dev
     defaults:
