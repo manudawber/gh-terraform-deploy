@@ -2,13 +2,15 @@ name: 'Terraform Dev'
 
 on: workflow_dispatch
 
+defaults:
+  run:
+    shell: bash
+    working-directory: environments/dev
+
 jobs:
   tf-dev-plan:
     runs-on: ubuntu-latest
     environment: dev
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}/environments/dev
 
     steps:
     - name: Checkout
@@ -45,8 +47,6 @@ jobs:
     needs: tf-dev-plan
     runs-on: ubuntu-latest
     environment: dev
-    defaults:
-      working-directory: ${{ github.workspace }}/environments/dev
 
     steps:
     - name: Checkout
