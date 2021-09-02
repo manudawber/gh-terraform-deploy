@@ -1,6 +1,11 @@
 New Infrastructure Deployment Flow
 ==================================
 
+GCP project pre-requisites
+- service mgmt api enabled
+- cloud resource mgr api enabled
+
+Workflows
 - Dev deploy
     - Trigger: manual
     - Branches: all
@@ -33,7 +38,7 @@ New Infrastructure Deployment Flow
         - plan
         - approve
         - deploy
-- PR open:
+- PR open
     - Trigger: PR open
     - Branches: master
     - Approval: yes
