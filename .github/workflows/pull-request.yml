@@ -41,9 +41,11 @@ jobs:
   tf-plan-dev:
     needs: tf-fmt
     runs-on: ubuntu-latest
+    env:
+      tf_actions_working_dir: environments/dev
     defaults:
       run:
-        working-directory: environments/dev
+        working-directory: ${{ env.tf_actions_working_dir }}
 
     steps:
     - name: Checkout
@@ -52,7 +54,7 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@master
       with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
+        project_id: ${{ env.GCP_PROJECT_ID_DEV }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
@@ -108,9 +110,11 @@ jobs:
   tf-plan-mgmt:
     needs: tf-fmt
     runs-on: ubuntu-latest
+    env:
+      tf_actions_working_dir: environments/mgmt
     defaults:
       run:
-        working-directory: environments/mgmt
+        working-directory: ${{ env.tf_actions_working_dir }}
 
     steps:
     - name: Checkout
@@ -119,7 +123,7 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@master
       with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
+        project_id: ${{ env.GCP_PROJECT_ID_MGMT }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
