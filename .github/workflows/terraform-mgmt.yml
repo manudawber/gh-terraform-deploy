@@ -1,4 +1,4 @@
-name: 'Terraform Dev'
+name: 'Terraform Mgmt'
 
 on: workflow_dispatch
 
@@ -8,7 +8,7 @@ env:
 defaults:
   run:
     shell: bash
-    working-directory: environments/dev
+    working-directory: environments/mgmt
 
 jobs:
   tf-plan:
@@ -48,7 +48,7 @@ jobs:
   tf-apply:
     needs: tf-plan
     runs-on: ubuntu-latest
-    environment: dev
+    environment: mgmt
 
     steps:
     - name: Checkout
