@@ -1,19 +1,108 @@
-New Infrastructure Deployment Flow
-==================================
+# MLOps Infrastructure
 
-GCP project pre-requisites
-- service mgmt api enabled
-- cloud resource mgr api enabled
+## GCP Pre-Requisites
 
-Workflows
+### Management project
+
+Services
+- Service Management API
+- Cloud Resource Manager API
+
+Service accounts
+- terraform-plan
+- terraform-mgmt
+- terraform-dev
+- terraform-test
+- terraform-prod
+
+IAM
+- terraform-plan
+    - Viewer
+- terraform-mgmt
+    - (Management deployment roles)
+
+
+### UAT project
+
+Services
+- Service Management API
+- Cloud Resource Manager API
+
+IAM
+- terraform-plan
+    - Viewer
+- terraform-uat
+    - (MLOps deployment roles)
+
+
+### Development project
+
+Services
+- Service Management API
+- Cloud Resource Manager API
+
+IAM
+- terraform-plan
+    - Viewer
+- terraform-dev
+    - (MLOps deployment roles)
+
+
+### Test project
+
+Services
+- Service Management API
+- Cloud Resource Manager API
+
+IAM
+- terraform-plan
+    - Viewer
+- terraform-dev
+    - (MLOps deployment roles)
+
+
+### Production project
+
+Services
+- Service Management API
+- Cloud Resource Manager API
+
+IAM
+- terraform-plan
+    - Viewer
+- terraform-dev
+    - (MLOps deployment roles)
+
+
+### Deployment roles
+
+Management project
+- Service Account Admin
+- Project IAM Admin
+- Secret Manager Secret Accessor
+- Storage Admin 
+
+MLOps projects
+- Vertex AI administrator
+- App Engine Creator
+- BigQuery Admin
+- Compute Network Admin
+- Service Account Admin
+- Project IAM Admin
+- Secret Manager Secret Accessor
+- Storage Admin 
+
+
+## Workflows
+
 - Dev deploy
     - Trigger: manual
     - Branches: all
-    - Approval: ?
+    - Approval: yes
     - Steps
         - plan
         - approve
-        - deploy
+        - apply
 - Test deploy
     - Trigger: manual
     - Branches: master
@@ -21,7 +110,7 @@ Workflows
     - Steps:
         - plan
         - approve
-        - deploy
+        - apply
 - Prod deploy
     - Trigger: manual
     - Branches: master
@@ -29,7 +118,7 @@ Workflows
     - Steps:
         - plan
         - approve
-        - deploy
+        - apply
 - Mgmt deploy
     - Trigger: manual
     - Branches: master
@@ -37,7 +126,7 @@ Workflows
     - Steps:
         - plan
         - approve
-        - deploy
+        - apply
 - PR open
     - Trigger: PR open
     - Branches: master
